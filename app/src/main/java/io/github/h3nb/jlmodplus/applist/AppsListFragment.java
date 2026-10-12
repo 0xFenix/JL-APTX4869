@@ -127,6 +127,7 @@ public class AppsListFragment extends Fragment {
     private final Map<Long, Integer> uiIdsByDatabaseId = new HashMap<>();
     private final Map<Long, LibraryAppRow> cachedRowsByDatabaseId = new HashMap<>();
     private final Map<Long, LibraryAppUiItem> cachedUiItemsByDatabaseId = new HashMap<>();
+    private Map<Long, String> localizedDescriptions = Collections.emptyMap();
     private final LibraryCollectionsUiStore collectionsUiStore = new LibraryCollectionsUiStore();
     private final CollectionMembersRequestGate collectionMembersRequests =
             new CollectionMembersRequestGate();
@@ -246,6 +247,7 @@ public class AppsListFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
+        libraryViewModel.refreshDescriptionLocale(requireContext());
         if (preferences != null) {
             preferences.registerOnSharedPreferenceChangeListener(appearancePreferenceListener);
             syncLibraryAppearance();
@@ -1006,6 +1008,7 @@ public class AppsListFragment extends Fragment {
             cachedAllReadyRows = null;
         }
 
+        localizedDescriptions = state.getLocalizedDescriptions();
         activeSourceRevision = state.getSourceRevision();
         collectionsUiStore.publishCollections(state.getCollections());
         // Keep the complete READY snapshot truly lazy. Normal list/filter/favorite/stat emissions only
@@ -1078,7 +1081,10 @@ public class AppsListFragment extends Fragment {
     private LibraryAppUiItem toLibraryUiItem(LibraryAppRow row) {
         LibraryAppRow cachedRow = cachedRowsByDatabaseId.get(row.getId());
         LibraryAppUiItem cachedItem = cachedUiItemsByDatabaseId.get(row.getId());
-        if (cachedItem != null && row.equals(cachedRow)) {
+        String displayDescription = localizedDescriptions.get(row.getId());
+        if (displayDescription == null) displayDescription = row.getDescription();
+        if (cachedItem != null && row.equals(cachedRow)
+                && displayDescription.equals(cachedItem.getDescription())) {
             rowsByUiId.put(cachedItem.getId(), row);
             return cachedItem;
         }
@@ -1095,7 +1101,7 @@ public class AppsListFragment extends Fragment {
                 row.getVersion(),
                 iconPath,
                 true,
-                row.getDescription(),
+                displayDescription,
                 row.getIconRevision(),
                 row.getFavorite(),
                 row.getSourceTitle(),
@@ -1104,7 +1110,8 @@ public class AppsListFragment extends Fragment {
                 row.getSourceDescription(),
                 row.getPlayCount(),
                 row.getTotalPlayTimeMs(),
-                row.getId());
+                row.getId(),
+                row.getDescription());
         cachedRowsByDatabaseId.put(row.getId(), row);
         cachedUiItemsByDatabaseId.put(row.getId(), item);
         return item;
@@ -1139,6 +1146,7 @@ public class AppsListFragment extends Fragment {
     }
 
     private void clearUiRows() {
+        localizedDescriptions = Collections.emptyMap();
         rowsByUiId.clear();
         activeGeneration = NO_GENERATION;
         activeWorkdir = null;

@@ -330,10 +330,12 @@ Các MIDlet khác được liên kết với hồ sơ này sẽ có bố cục m
     <string name="pref_vk_type_arrows">Mũi tên</string>
     <string name="pref_vk_type_arrows_numbers">Mũi tên &amp; số</string>
     <string name="pref_vk_type_custom">Tùy chỉnh</string>
+    <string name="pref_vk_type_nes">Tay cầm NES</string>
     <string name="pref_vk_type_numbers">Số</string>
     <string name="pref_vk_type_numbers_arrows">Số &amp; mũi tên</string>
     <string name="pref_vk_type_phone">Điện thoại</string>
     <string name="pref_vk_type_phone_arrows">Điện thoại(mũi tên)</string>
+    <string name="pref_vk_type_snes">Tay cầm SNES</string>
     <string name="pref_wakelock_title">Giữ màn hình mở</string>
     <string name="PREF_WIDTH">Chiều rộng</string>
     <string name="reinstall">Ứng dụng đã cài đặt.\n\nBạn có muốn cài đặt lại không?\nTất cả dữ liệu sẽ được lưu.</string>
